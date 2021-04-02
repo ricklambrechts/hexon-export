@@ -2,7 +2,10 @@
 
 namespace RoyScheepens\HexonExport\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Occasion extends Model
 {
@@ -68,19 +71,19 @@ class Occasion extends Model
      * ----------------------------------------
      */
 
-    public function image()
+    public function image(): HasOne
     {
-        return $this->hasOne('RoyScheepens\HexonExport\Models\OccasionImage')->orderBy('id', 'asc');
+        return $this->hasOne(OccasionImage::class)->orderBy('id');
     }
 
-    public function images()
+    public function images(): HasMany
     {
-        return $this->hasMany('RoyScheepens\HexonExport\Models\OccasionImage');
+        return $this->hasMany(OccasionImage::class);
     }
 
-    public function accessories()
+    public function accessories(): HasMany
     {
-        return $this->hasMany('RoyScheepens\HexonExport\Models\OccasionAccessory')->orderBy('name');
+        return $this->hasMany(OccasionAccessory::class)->orderBy('name');
     }
 
     /**
@@ -88,7 +91,7 @@ class Occasion extends Model
      * ----------------------------------------
      */
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         return implode(' ', [
             $this->brand,
@@ -96,7 +99,7 @@ class Occasion extends Model
         ]);
     }
 
-    public function getNameFullAttribute()
+    public function getNameFullAttribute(): string
     {
         return implode(' ', [
             $this->brand,
@@ -105,45 +108,41 @@ class Occasion extends Model
         ]);
     }
 
-    public function getApkUntilFormattedAttribute()
+    public function getApkUntilFormattedAttribute(): string
     {
         return $this->apk_until->format('d-m-Y');
     }
 
-    public function getPriceFormattedAttribute()
+    public function getPriceFormattedAttribute(): string
     {
         return '€ ' . number_format($this->price, 0, ',', '.') . ',-';
     }
 
-    public function getRemarksAttribute($val)
+    public function getRemarksAttribute($val): string
     {
         return html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
     }
 
-    public function getLicensePlateFormattedAttribute()
+    public function getLicensePlateFormattedAttribute(): ?string
     {
-        if(! $this->license_plate)
-        {
+        if (! $this->license_plate) {
             return null;
         }
 
         $formatted = '';
 
-        foreach (str_split($this->license_plate) as $char)
-        {
+        foreach (str_split($this->license_plate) as $char) {
             $type = is_numeric($char) ? 'number' : 'string';
             $prevChar = substr($formatted, -1);
 
-            if($prevChar == '')
-            {
+            if ($prevChar == '') {
                 $formatted .= $char;
                 continue;
             }
 
             $prevCharType = is_numeric($prevChar) ? 'number' : 'string';
 
-            if($type != $prevCharType)
-            {
+            if ($type != $prevCharType) {
                 $formatted .= '-';
             }
 
@@ -153,12 +152,12 @@ class Occasion extends Model
         return $formatted;
     }
 
-    public function getColorFormattedAttribute()
+    public function getColorFormattedAttribute(): string
     {
         return ucwords(mb_strtolower($this->color));
     }
 
-    public function getMileageFormattedAttribute()
+    public function getMileageFormattedAttribute(): string
     {
         $units = [
             'K' => 'km',
@@ -168,32 +167,32 @@ class Occasion extends Model
         return number_format($this->mileage, 0, ',', '.') . ' ' . $units[$this->mileage_unit];
     }
 
-    public function getVatMarginFormattedAttribute()
+    public function getVatMarginFormattedAttribute(): string
     {
         return $this->vat_margin === 'M' ? 'Marge' : 'BTW';
     }
 
-    public function getVehicleTaxFormattedAttribute()
+    public function getVehicleTaxFormattedAttribute(): string
     {
         return '€ ' . number_format($this->vehicle_tax, 0, ',', '.') . ',-';
     }
 
-    public function getDeliveryCostsFormattedAttribute()
+    public function getDeliveryCostsFormattedAttribute(): string
     {
         return '€ ' . number_format($this->delivery_costs, 0, ',', '.') . ',-';
     }
 
-    public function getRoadTaxMinFormattedAttribute()
+    public function getRoadTaxMinFormattedAttribute(): string
     {
         return '€ ' . number_format($this->road_tax_min, 0, ',', '.') . ',-';
     }
 
-    public function getRoadTaxMaxFormattedAttribute()
+    public function getRoadTaxMaxFormattedAttribute(): string
     {
         return '€ ' . number_format($this->road_tax_max, 0, ',', '.') . ',-';
     }
 
-    public function getFuelTypeFormattedAttribute()
+    public function getFuelTypeFormattedAttribute(): string
     {
         $types = [
             'B' => 'Benzine',
@@ -209,7 +208,7 @@ class Occasion extends Model
         return $types[$this->fuel_type];
     }
 
-    public function getTransmissionFormattedAttribute()
+    public function getTransmissionFormattedAttribute(): string
     {
         $types = [
             'H' => 'Handgeschakeld',
@@ -221,17 +220,17 @@ class Occasion extends Model
         return $types[$this->transmission];
     }
 
-    public function getMassFormattedAttribute()
+    public function getMassFormattedAttribute(): string
     {
         return number_format($this->mass, 0, ',', '.') . 'kg';
     }
 
-    public function getCylinderCapacityFormattedAttribute()
+    public function getCylinderCapacityFormattedAttribute(): string
     {
         return $this->cylinder_capacity . ' cc';
     }
 
-    public function getPowerAttribute()
+    public function getPowerAttribute(): ?string
     {
         if($this->power_hp && $this->power_kw) {
             return sprintf("%d pk / %d Kw", $this->power_hp, $this->power_kw);
@@ -248,27 +247,27 @@ class Occasion extends Model
         return null;
     }
 
-    public function getCo2EmissionFormattedAttribute()
+    public function getCo2EmissionFormattedAttribute(): string
     {
         return $this->co2_emission . ' g/Km';
     }
 
-    public function getFuelConsumptionCityFormattedAttribute()
+    public function getFuelConsumptionCityFormattedAttribute(): string
     {
         return $this->fuel_consumption_city . ' l/100 Km';
     }
 
-    public function getFuelConsumptionHighwayFormattedAttribute()
+    public function getFuelConsumptionHighwayFormattedAttribute(): string
     {
         return $this->fuel_consumption_highway . ' l/100 Km';
     }
 
-    public function getFuelConsumptionAvgFormattedAttribute()
+    public function getFuelConsumptionAvgFormattedAttribute(): string
     {
         return $this->fuel_consumption_avg . ' l/100 Km';
     }
 
-    public function getRoadTaxAttribute()
+    public function getRoadTaxAttribute(): ?string
     {
         if($this->road_tax_min && $this->road_tax_max) {
             return sprintf("€ %s - € %s p/kw",
@@ -287,20 +286,20 @@ class Occasion extends Model
 
     /**
      * Returns only occasions that are sold
-     * @param  Builder $query The query builder instance
+     * @param Builder $query The query builder instance
      * @return Builder
      */
-    public function scopeSold($query)
+    public function scopeSold(Builder $query): Builder
     {
         return $query->where('sold', true);
     }
 
     /**
      * Returns only occasions that are not sold
-     * @param  Builder $query The query builder instance
+     * @param Builder $query The query builder instance
      * @return Builder
      */
-    public function scopeNotSold($query)
+    public function scopeNotSold(Builder $query): Builder
     {
         return $query->where('sold', false);
     }

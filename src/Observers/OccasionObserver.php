@@ -2,10 +2,11 @@
 
 namespace RoyScheepens\HexonExport\Observers;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use RoyScheepens\HexonExport\Models\Occasion;
 use Illuminate\Support\Collection;
 
-use Storage;
 
 class OccasionObserver
 {
@@ -14,11 +15,10 @@ class OccasionObserver
      * @param  Occasion $occasion The resource to add the slug to
      * @return void
      */
-    public function creating(Occasion $occasion)
+    public function creating(Occasion $occasion): void
     {
-        if(! $occasion->slug)
-        {
-            $slug = str_slug($occasion->name_full);
+        if(! $occasion->slug) {
+            $slug = Str::slug($occasion->name_full);
 
             $slug = $this->makeSlugUnique($occasion, $slug);
 
@@ -32,7 +32,7 @@ class OccasionObserver
      * @param  Occasion  $occasion
      * @return void
      */
-    public function deleting(Occasion $occasion)
+    public function deleting(Occasion $occasion): void
     {
         $occasion->accessories()->delete();
 
@@ -51,7 +51,7 @@ class OccasionObserver
      * @param  string $slug         The slug to make unique
      * @return string               The unique slug
      */
-    protected function makeSlugUnique($occasion, $slug)
+    protected function makeSlugUnique($occasion, $slug): string
     {
         $list = Occasion::all()->pluck('slug', $occasion->getKeyName());
 
@@ -91,7 +91,8 @@ class OccasionObserver
      *
      * @param string $slug
      * @param string $separator
-     * @param \Illuminate\Support\Collection $list
+     * @param Collection $list
+     * @param Occasion $occasion
      * @return string
      */
     protected function generateSuffix(string $slug, string $separator, Collection $list, Occasion $occasion): string

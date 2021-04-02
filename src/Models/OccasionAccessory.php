@@ -3,6 +3,7 @@
 namespace RoyScheepens\HexonExport\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OccasionAccessory extends Model
 {
@@ -28,9 +29,9 @@ class OccasionAccessory extends Model
      * ----------------------------------------
      */
 
-    public function occasion()
+    public function occasion(): BelongsTo
     {
-        return $this->belongsTo('RoyScheepens\HexonExport\Models\Occassion');
+        return $this->belongsTo(Occasion::class);
     }
 
 }

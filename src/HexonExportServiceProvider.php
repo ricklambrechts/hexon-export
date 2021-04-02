@@ -2,6 +2,9 @@
 
 namespace RoyScheepens\HexonExport;
 
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
+use RoyScheepens\HexonExport\Controllers\HandleExportController;
 use RoyScheepens\HexonExport\Middleware\VerifyIpWhitelist;
 
 use RoyScheepens\HexonExport\Models\Occasion;
@@ -19,7 +22,7 @@ class HexonExportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__.'/../config/hexon-export.php' => config_path('hexon-export.php'),
@@ -29,20 +32,11 @@ class HexonExportServiceProvider extends ServiceProvider
             __DIR__ . '/../migrations' => database_path('migrations')
         ], 'migrations');
 
-        $routeConfig = [
-            'namespace' => 'RoyScheepens\HexonExport\Controllers',
-            'middleware' => [VerifyIpWhitelist::class],
-        ];
-
-        // todo: add to api group?
-
-        $this->app['router']->group($routeConfig, function($router)
-        {
-            $router->post($this->app['config']->get('hexon-export.url_endpoint'), [
-                'uses' => 'HandleExportController@handle',
-                'as' => 'hexon-export.export_handler'
-            ]);
-        });
+        Route::namespace('RoyScheepens\HexonExport\Controllers')
+            ->middleware([VerifyIpWhitelist::class])
+            ->group(function() {
+                Route::post(Config::get('hexon-export.url_endpoint'), [HandleExportController::class, 'handle'])->name('hexon-export.export_handler');
+            });
 
         // Observers
         Occasion::observe(OccasionObserver::class);
@@ -56,14 +50,10 @@ class HexonExportServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(HexonExport::class, function () {
+        $this->mergeConfigFrom(__DIR__.'/../config/hexon-export.php', 'hexon-export');
+
+        $this->app->bind('hexon-export', function($app) {
             return new HexonExport();
         });
-
-        $this->app->alias(HexonExport::class, 'hexon-export');
-
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/hexon-export.php', 'hexon-export'
-        );
     }
 }

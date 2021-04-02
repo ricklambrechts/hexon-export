@@ -2,9 +2,9 @@
 
 namespace RoyScheepens\HexonExport\Observers;
 
+use Illuminate\Support\Facades\Storage;
 use RoyScheepens\HexonExport\Models\OccasionImage;
 
-use Storage;
 
 class OccasionImageObserver
 {
@@ -14,11 +14,10 @@ class OccasionImageObserver
      * @param  OccasionImage  $image
      * @return void
      */
-    public function deleting(OccasionImage $image)
+    public function deleting(OccasionImage $image): void
     {
         // todo: this does not seem to work, check it
-        if(Storage::disk('public')->exists($image->path))
-        {
+        if (Storage::disk('public')->exists($image->path)) {
             Storage::disk('public')->delete($image->path);
         }
     }

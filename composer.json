@@ -8,21 +8,27 @@
     ],
     "homepage": "https://github.com/royscheepens/hexon-export",
     "authors": [
-    {
-        "name": "Roy Scheepens",
-        "email": "roy.scheepens@gmail.com"
-    }
+        {
+            "name": "Roy Scheepens",
+            "email": "roy.scheepens@gmail.com"
+        }
     ],
     "require": {
-        "php": ">=7.0",
-        "nesbot/carbon": "~1.20"
+        "php": ">=7.4",
+        "ext-simplexml": "*"
     },
     "require-dev": {
-        "illuminate/framework": "5.5.x"
+        "orchestra/testbench": "^6.16",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
             "RoyScheepens\\HexonExport\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RoyScheepens\\HexonExport\\Tests\\": "tests"
         }
     },
     "license": "MIT",
@@ -32,7 +38,7 @@
                 "RoyScheepens\\HexonExport\\HexonExportServiceProvider"
             ],
             "aliases": {
-                "HexonExport": "RoyScheepens\\HexonExport\\HexonExportFacade"
+                "HexonExport": "RoyScheepens\\HexonExport\\Facades\\HexonExport"
             }
         }
     }

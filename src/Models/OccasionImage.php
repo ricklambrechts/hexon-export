@@ -4,7 +4,8 @@ namespace RoyScheepens\HexonExport\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-use Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class OccasionImage extends Model
 {
@@ -40,9 +41,9 @@ class OccasionImage extends Model
      * ----------------------------------------
      */
 
-    public function occasion()
+    public function occasion(): BelongsTo
     {
-        return $this->belongsTo('RoyScheepens\HexonExport\Models\Occasion');
+        return $this->belongsTo(Occasion::class);
     }
 
     /**
@@ -50,7 +51,7 @@ class OccasionImage extends Model
      * ----------------------------------------
      */
 
-    public function getPathAttribute()
+    public function getPathAttribute(): string
     {
         return implode('/', [
             config('hexon-export.images_storage_path') . $this->occasion->resource_id,
@@ -58,11 +59,9 @@ class OccasionImage extends Model
         ]);
     }
 
-    public function getUrlAttribute()
+    public function getUrlAttribute(): string
     {
         // todo: check this
-        $url = Storage::disk('public')->url($this->path);
-
-        return $url;
+        return Storage::disk('public')->url($this->path);
     }
 }
