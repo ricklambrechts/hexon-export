@@ -26,10 +26,11 @@ And add the service provider in `config/app.php`
 ```
 
 If you want to use the facade, add this to your facades in `config/app.php`
+
 ```php
 'aliases' => [
     ........,
-    'HexonExport' => RoyScheepens\HexonExport\HexonExportFacade::class,
+    'HexonExport' => RoyScheepens\HexonExport\Facades\HexonExport::class,
 ]
 
 ```

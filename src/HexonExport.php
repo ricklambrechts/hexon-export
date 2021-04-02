@@ -2,13 +2,13 @@
 
 namespace RoyScheepens\HexonExport;
 
-use RoyScheepens\HexonExport\Models\Occasion;
-use RoyScheepens\HexonExport\Models\OccasionImage;
-use RoyScheepens\HexonExport\Models\OccasionAccessory;
-
-use Storage;
-
+use Exception;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RoyScheepens\HexonExport\Models\Occasion;
+
+use SimpleXmlElement;
+
 use Carbon\Carbon;
 
 class HexonExport {
@@ -34,7 +34,7 @@ class HexonExport {
     /**
      * Class Constructor
      */
-    function __construct()
+    public function __construct()
     {
         // todo: add option to set image disk on storage
     }
@@ -42,10 +42,11 @@ class HexonExport {
     /**
      * Handles the import of the XML
      *
-     * @param \SimpleXmlElement $xml
-     * @return void
+     * @param SimpleXmlElement $xml
+     * @return HexonExport
+     * @throws Exception
      */
-    public function handle(\SimpleXmlElement $xml)
+    public function handle(SimpleXmlElement $xml): HexonExport
     {
         // The resource id from Hexon
         $this->resourceId = (int) $xml->voertuignr_hexon;
@@ -146,7 +147,7 @@ class HexonExport {
                     // Set the images
                     $this->setImages($xml->afbeeldingen->afbeelding);
 
-                } catch(\Exception $e) {
+                } catch(Exception $e) {
 
                     $this->setError('Unable to save or update resource.');
 
@@ -181,7 +182,7 @@ class HexonExport {
      * @param mixed  $value The value
      * @param string $type  To which type to cast
      */
-    protected function setAttribute($attr, $value, $type = 'string', $fallback = null)
+    protected function setAttribute($attr, $value, $type = 'string', $fallback = null): void
     {
         switch ($type) {
             case 'int':
@@ -201,7 +202,7 @@ class HexonExport {
                 try {
                     $value = Carbon::createFromFormat('d-m-Y', $value);
 
-                } catch(\Exception $e)
+                } catch(Exception $e)
                 {
                     $value = $fallback;
                 }
@@ -210,8 +211,7 @@ class HexonExport {
         }
 
         // Use the fallback value should it be empty
-        if( $type !== 'boolean' && empty($value) )
-        {
+        if ($type !== 'boolean' && empty($value)) {
             $value = $fallback;
         }
 
@@ -224,10 +224,9 @@ class HexonExport {
      * @param string $registrationDate
      * @return void
      */
-    private function setBuildYear($registrationDate)
+    private function setBuildYear(string $registrationDate): void
     {
-        if($date = Carbon::createFromFormat('d-m-Y', $registrationDate))
-        {
+        if ($date = Carbon::createFromFormat('d-m-Y', $registrationDate)) {
             $this->resource->setAttribute('build_year', $date->format('m-Y'));
         }
     }
@@ -238,7 +237,7 @@ class HexonExport {
      * @param array $accessories
      * @return void
      */
-    protected function setAccessories($accessories)
+    protected function setAccessories($accessories): void
     {
         // First, remove all accessories
         $this->resource->accessories()->delete();
@@ -256,17 +255,17 @@ class HexonExport {
             }
 
             $this->resource->accessories()->create([
-                'name' => str_limit($name, 160)
+                'name' => Str::limit($name, 160)
             ]);
         }
     }
 
     /**
      * Stores the images to disk
-     * @param  Array $images An array of images
+     * @param  array $images An array of images
      * @return void
      */
-    protected function setImages($images)
+    protected function setImages($images): void
     {
         $this->resource->images()->delete();
 
@@ -300,15 +299,12 @@ class HexonExport {
 
     /**
      * Stores the XML to disk
-     * @param  SimpleXmlElement $xml The XML data to write to disk
+     * @param SimpleXmlElement $xml The XML data to write to disk
      * @return void
      */
-    protected function saveXml($xml)
+    protected function saveXml(SimpleXmlElement $xml): void
     {
-        $filename = implode(' ', [
-            Carbon::now()->toDateTimeString(),
-            $this->resourceId
-        ]).'.xml';
+        $filename = str_replace([":", " "], ["-", "_"], now()->toDateTimeString() . '_' . $this->resourceId.'.xml');
 
         Storage::put(config('hexon-export.xml_storage_path') . $filename, $xml->asXML());
     }
@@ -317,28 +313,27 @@ class HexonExport {
      * Set an error
      * @param string $err The error description
      */
-    protected function setError($err)
+    protected function setError(string $err): void
     {
-        array_push($this->errors, $err);
+        $this->errors[] = $err;
     }
 
     /**
      * Do we have any errors?
      * @return boolean True if we do, false if not
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
-        return count($this->errors) <> 0;
+        return count($this->errors) !== 0;
     }
 
     /**
      * Returns the errors
      * @return array Array of errors
      */
-    public function getErrors()
+    public function getErrors(): array
     {
-        if($this->hasErrors())
-        {
+        if ($this->hasErrors()) {
             return $this->errors;
         }
 

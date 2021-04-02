@@ -11,21 +11,17 @@ class VerifyIpWhitelist
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
+     * @param Request $request
+     * @param Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        $whitelist = app('config')->get('hexon-export.ip_whitelist');
+        $whitelist = config('hexon-export.ip_whitelist', []);
 
-        if(\App::environment('production') )
-        {
-            if(count($whitelist) && ! in_array($request->ip(), $whitelist))
-            {
-                abort(403, 'You are not allowed to access this resource.');
-            }
-        }
+        abort_if(app()->environment('production')
+            && count($whitelist)
+            && !in_array($request->ip(), $whitelist, true), 403, 'You are not allowed to access this resource.');
 
         return $next($request);
     }
