@@ -304,6 +304,10 @@ class HexonExport {
      */
     protected function saveXml(SimpleXmlElement $xml): void
     {
+        if (config('hexon-export.store_xml') === false || empty(config('hexon-export.xml_storage_path'))) {
+            return;
+        }
+
         $filename = str_replace([":", " "], ["-", "_"], now()->toDateTimeString() . '_' . $this->resourceId.'.xml');
 
         Storage::put(config('hexon-export.xml_storage_path') . $filename, $xml->asXML());
