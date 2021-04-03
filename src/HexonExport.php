@@ -15,21 +15,21 @@ class HexonExport {
 
     /**
      * The Hexon Id of the resource
-     * @var Number
+     * @var int
      */
-    protected $resourceId;
+    protected int $resourceId;
 
     /**
      * The local resource we are going to create or update
      * @var Occasion
      */
-    protected $resource;
+    protected Occasion $resource;
 
     /**
      * Array of errors
      * @var array
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
      * Class Constructor
@@ -324,7 +324,7 @@ class HexonExport {
      */
     public function hasErrors(): bool
     {
-        return count($this->errors) !== 0;
+        return count($this->errors) > 0;
     }
 
     /**
@@ -333,11 +333,6 @@ class HexonExport {
      */
     public function getErrors(): array
     {
-        if ($this->hasErrors()) {
-            return $this->errors;
-        }
-
-        return [];
+        return $this->errors;
     }
-
 }

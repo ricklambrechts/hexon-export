@@ -3,7 +3,13 @@
 namespace RoyScheepens\HexonExport\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use SimpleXMLElement;
 
+/**
+ * @method static \RoyScheepens\HexonExport\HexonExport handle(SimpleXmlElement $xml)
+ *
+ * @see \RoyScheepens\HexonExport\HexonExport
+ */
 class HexonExport extends Facade
 {
     /**
