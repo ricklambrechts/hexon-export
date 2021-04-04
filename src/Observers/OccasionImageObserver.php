@@ -5,7 +5,6 @@ namespace RoyScheepens\HexonExport\Observers;
 use Illuminate\Support\Facades\Storage;
 use RoyScheepens\HexonExport\Models\OccasionImage;
 
-
 class OccasionImageObserver
 {
     /**

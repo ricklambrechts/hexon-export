@@ -49,9 +49,7 @@ class HandleExportController extends Controller
                 abort(422, $error);
                 exit;
             }
-
-        } catch(Exception $e) {
-
+        } catch (Exception $e) {
             $error = 'Failed to parse XML due to malformed data.';
 
             Log::error($error);

@@ -232,15 +232,15 @@ class Occasion extends Model
 
     public function getPowerAttribute(): ?string
     {
-        if($this->power_hp && $this->power_kw) {
+        if ($this->power_hp && $this->power_kw) {
             return sprintf("%d pk / %d Kw", $this->power_hp, $this->power_kw);
         }
 
-        if($this->power_hp) {
+        if ($this->power_hp) {
             return sprintf("%d pk", $this->power_hp);
         }
 
-        if($this->power_kw) {
+        if ($this->power_kw) {
             return sprintf("%d Kw", $this->power_kw);
         }
 
@@ -269,8 +269,9 @@ class Occasion extends Model
 
     public function getRoadTaxAttribute(): ?string
     {
-        if($this->road_tax_min && $this->road_tax_max) {
-            return sprintf("€ %s - € %s p/kw",
+        if ($this->road_tax_min && $this->road_tax_max) {
+            return sprintf(
+                "€ %s - € %s p/kw",
                 number_format($this->road_tax_min, 0, ',', '.'),
                 number_format($this->road_tax_max, 0, ',', '.')
             );
@@ -303,5 +304,4 @@ class Occasion extends Model
     {
         return $query->where('sold', false);
     }
-
 }

@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use RoyScheepens\HexonExport\Models\Occasion;
 use Illuminate\Support\Collection;
 
-
 class OccasionObserver
 {
     /**
@@ -17,7 +16,7 @@ class OccasionObserver
      */
     public function creating(Occasion $occasion): void
     {
-        if(! $occasion->slug) {
+        if (!$occasion->slug) {
             $slug = Str::slug($occasion->name_full);
 
             $slug = $this->makeSlugUnique($occasion, $slug);
@@ -59,17 +58,16 @@ class OccasionObserver
 
         // If we have no slugs already, or the slug we want to
         // check is not present, then return it
-        if(
+        if (
             $list->count() === 0 ||
-            $list->contains($slug) === FALSE
+            $list->contains($slug) === false
         ) {
             return $slug;
         }
 
         // If the slug is in the list, but it is of our own model,
         // then also just return it
-        if ($list->has($occasion->getKey()))
-        {
+        if ($list->has($occasion->getKey())) {
             $currentSlug = $list->get($occasion->getKey());
 
             if (
@@ -100,19 +98,16 @@ class OccasionObserver
         $len = strlen($slug . $separator);
 
         // If the slug already exists, but belongs to our model, return the current suffix.
-        if ($list->search($slug) === $occasion->getKey())
-        {
+        if ($list->search($slug) === $occasion->getKey()) {
             $suffix = explode($separator, $slug);
             return end($suffix);
         }
 
-        $list->transform(function ($value, $key) use ($len)
-        {
+        $list->transform(function ($value) use ($len) {
             return (int)substr($value, $len);
         });
 
         // Find the highest value and return one greater.
         return $list->max() + 1;
     }
-
 }
