@@ -7,6 +7,7 @@
         "laravel"
     ],
     "homepage": "https://github.com/royscheepens/hexon-export",
+    "license": "MIT",
     "authors": [
         {
             "name": "Roy Scheepens",
@@ -14,12 +15,14 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": "^7.4|^8.0",
         "ext-simplexml": "*"
     },
     "require-dev": {
         "orchestra/testbench": "^6.16",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^4.7",
+        "friendsofphp/php-cs-fixer": "^2.18"
     },
     "autoload": {
         "psr-4": {
@@ -31,7 +34,12 @@
             "RoyScheepens\\HexonExport\\Tests\\": "tests"
         }
     },
-    "license": "MIT",
+    "scripts": {
+        "psalm": "vendor/bin/psalm",
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+    },
     "extra": {
         "laravel": {
             "providers": [
