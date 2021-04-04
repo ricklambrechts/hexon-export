@@ -11,7 +11,8 @@ use SimpleXmlElement;
 
 use Carbon\Carbon;
 
-class HexonExport {
+class HexonExport
+{
 
     /**
      * The Hexon Id of the resource
@@ -55,8 +56,7 @@ class HexonExport {
         $this->saveXml($xml);
 
         // Perform an insert/update or delete, based on the action supplied
-        switch ($xml->attributes()->actie)
-        {
+        switch ($xml->attributes()->actie ?? '') {
             // Inserts or updates the existing record
             case 'add':
             case 'change':

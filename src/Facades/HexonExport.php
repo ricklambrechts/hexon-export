@@ -19,6 +19,6 @@ class HexonExport extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-      return 'hexon-export';
-  }
+        return 'hexon-export';
+    }
 }

@@ -33,5 +33,4 @@ class OccasionAccessory extends Model
     {
         return $this->belongsTo(Occasion::class);
     }
-
 }
