@@ -1,3 +1,12 @@
-/vendor
+#PHPStorm
 /.idea
+
+# Composer
 /composer.lock
+/vendor/*
+
+# PHPUnit
+/.phpunit.result.cache
+
+# Ray
+/.ray.php
