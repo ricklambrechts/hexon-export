@@ -8,5 +8,8 @@
 # PHPUnit
 /.phpunit.result.cache
 
+# PHP CS
+/.php_cs.cache
+
 # Ray
 /.ray.php
