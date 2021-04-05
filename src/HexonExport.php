@@ -16,15 +16,15 @@ class HexonExport
 
     /**
      * The Hexon Id of the resource
-     * @var int
+     * @var int|null
      */
-    protected int $resourceId;
+    protected ?int $resourceId = null;
 
     /**
      * The local resource we are going to create or update
-     * @var Occasion
+     * @var Occasion|null
      */
-    protected Occasion $resource;
+    protected ?Occasion $resource = null;
 
     /**
      * Array of errors
@@ -146,9 +146,7 @@ class HexonExport
 
                     // Set the images
                     $this->setImages($xml->afbeeldingen->afbeelding);
-
-                } catch(Exception $e) {
-
+                } catch (Exception $e) {
                     $this->setError('Unable to save or update resource.');
 
                     $this->setError($e->getMessage());
@@ -160,9 +158,7 @@ class HexonExport
             case 'delete':
 
                 $this->resource = Occasion::where('resource_id', $this->resourceId)->first();
-
-                if($this->resource)
-                {
+                if ($this->resource) {
                     $this->resource->delete();
                 }
 
@@ -178,12 +174,17 @@ class HexonExport
 
     /**
      * Sets an attribute to the resource and casts to desired type
-     * @param string $attr  The attribut key to set
-     * @param mixed  $value The value
-     * @param string $type  To which type to cast
+     * @param string $attr The attribut key to set
+     * @param mixed $value The value
+     * @param string $type To which type to cast
+     * @param null $fallback
      */
-    protected function setAttribute($attr, $value, $type = 'string', $fallback = null): void
+    protected function setAttribute(string $attr, $value, $type = 'string', $fallback = null): void
     {
+        if ($this->resource === null) {
+            return;
+        }
+
         switch ($type) {
             case 'int':
                 $value = (int) $value;
@@ -201,9 +202,7 @@ class HexonExport
             case 'date':
                 try {
                     $value = Carbon::createFromFormat('d-m-Y', $value);
-
-                } catch(Exception $e)
-                {
+                } catch (Exception $e) {
                     $value = $fallback;
                 }
 
@@ -221,12 +220,16 @@ class HexonExport
     /**
      * Sets the build_year attribute based on the datum_deel_1 value
      *
-     * @param string $registrationDate
+     * @param string|null $registrationDate
      * @return void
      */
-    private function setBuildYear(string $registrationDate): void
+    private function setBuildYear(?string $registrationDate): void
     {
-        if ($date = Carbon::createFromFormat('d-m-Y', $registrationDate)) {
+        if ($this->resource === null) {
+            return;
+        }
+
+        if ($registrationDate && $date = Carbon::createFromFormat('d-m-Y', $registrationDate)) {
             $this->resource->setAttribute('build_year', $date->format('m-Y'));
         }
     }
@@ -242,11 +245,10 @@ class HexonExport
         // First, remove all accessories
         $this->resource->accessories()->delete();
 
-        foreach ($accessories as $accessory)
-        {
+        foreach ($accessories as $accessory) {
             $name = (string) $accessory->naam;
 
-            if(
+            if (
                 empty($name) ||
                 strlen($name) <= 1 ||
                 in_array(substr($name, 0, 1), ['(', ')', '&'])
@@ -267,15 +269,22 @@ class HexonExport
      */
     protected function setImages($images): void
     {
+        if (!$images) {
+            return;
+        }
+
+        if ($this->resource === null) {
+            return;
+        }
+
+
         $this->resource->images()->delete();
 
-        foreach ($images as $image)
-        {
+        foreach ($images as $image) {
             $imageId = (int) $image->attributes()->nr;
             $imageUrl = (string) $image->url;
 
-            if( $contents = file_get_contents($imageUrl) )
-            {
+            if ($contents = file_get_contents($imageUrl)) {
                 $filename = implode('_', [
                     $this->resourceId,
                     $imageId
@@ -290,10 +299,8 @@ class HexonExport
                 Storage::disk('public')->put($imageResource->path, $contents);
 
                 $imageResource->save();
-
-            } else {
-                // todo: handle exception?
             }
+            // todo: handle exception?
         }
     }
 
@@ -304,13 +311,21 @@ class HexonExport
      */
     protected function saveXml(SimpleXmlElement $xml): void
     {
+        if ($this->resourceId === null) {
+            return;
+        }
+
         if (config('hexon-export.store_xml') === false || empty(config('hexon-export.xml_storage_path'))) {
             return;
         }
 
         $filename = str_replace([":", " "], ["-", "_"], now()->toDateTimeString() . '_' . $this->resourceId.'.xml');
 
-        Storage::put(config('hexon-export.xml_storage_path') . $filename, $xml->asXML());
+        $xmlData = $xml->asXML();
+        if (!$xmlData) {
+            return;
+        }
+        Storage::put(config('hexon-export.xml_storage_path') . $filename, $xmlData);
     }
 
     /**

@@ -19,7 +19,7 @@ class Occasion extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<array-key, string>|bool
      */
     protected $guarded = [
         'id'
@@ -91,6 +91,11 @@ class Occasion extends Model
      * ----------------------------------------
      */
 
+    /**
+     * Get the name of the Ocassion
+     * @return string
+     * @psalm-suppress InaccessibleProperty
+     */
     public function getNameAttribute(): string
     {
         return implode(' ', [
@@ -99,6 +104,11 @@ class Occasion extends Model
         ]);
     }
 
+    /**
+     * Get the full name of the Ocassion
+     * @return string
+     * @psalm-suppress InaccessibleProperty
+     */
     public function getNameFullAttribute(): string
     {
         return implode(' ', [
@@ -118,7 +128,7 @@ class Occasion extends Model
         return '€ ' . number_format($this->price, 0, ',', '.') . ',-';
     }
 
-    public function getRemarksAttribute($val): string
+    public function getRemarksAttribute(string $val): string
     {
         return html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
     }

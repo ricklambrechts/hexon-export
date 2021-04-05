@@ -103,7 +103,7 @@ class OccasionObserver
             return end($suffix);
         }
 
-        $list->transform(function ($value) use ($len) {
+        $list->transform(function (string $value) use ($len) {
             return (int)substr($value, $len);
         });
 

@@ -19,7 +19,7 @@ class OccasionImage extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<array-key, string>
      */
     protected $fillable = [
         'occasion_id',
@@ -59,9 +59,13 @@ class OccasionImage extends Model
         ]);
     }
 
+    /**
+     * Get the public url of the image
+     * @return string
+     * @psalm-suppress UndefinedInterfaceMethod
+     */
     public function getUrlAttribute(): string
     {
-        // todo: check this
         return Storage::disk('public')->url($this->path);
     }
 }

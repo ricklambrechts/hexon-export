@@ -37,7 +37,7 @@ class HandleExportController extends Controller
         $input = $this->request->getContent();
 
         try {
-            $xml = new SimpleXmlElement($input);
+            $xml = new SimpleXmlElement((string) $input);
 
             $result = HexonExport::handle($xml);
 
