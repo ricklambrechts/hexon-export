@@ -8,7 +8,7 @@ use RoyScheepens\HexonExport\Facades\HexonExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 class HandleExportController extends Controller
 {
@@ -62,6 +62,6 @@ class HandleExportController extends Controller
         }
 
         // Hexon requires a response of '1' if all went well.
-        exit('1');
+        return response("1");
     }
 }
