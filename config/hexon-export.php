@@ -23,6 +23,7 @@ return [
      |--------------------------------------------------------------------------
      |
      | The url where the POST requests from Hexon are routed to.
+     | You could leave this empty if you don't want to register the route.
      |
      */
     'url_endpoint' => '/hexon-export',

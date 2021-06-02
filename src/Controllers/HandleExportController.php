@@ -34,6 +34,10 @@ class HandleExportController extends Controller
      */
     public function handle(): string
     {
+        if (app()->has('debugbar')) {
+            app('debugbar')->disable();
+        }
+
         $input = $this->request->getContent();
 
         try {
@@ -54,10 +58,11 @@ class HandleExportController extends Controller
 
             Log::error($error);
 
+
             abort(422, $error);
         }
 
         // Hexon requires a response of '1' if all went well.
-        exit('1');
+        return response("1");
     }
 }
