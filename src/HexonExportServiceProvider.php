@@ -24,19 +24,9 @@ class HexonExportServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__.'/../config/hexon-export.php' => config_path('hexon-export.php'),
-        ], 'config');
+        $this->registerPublishables();
 
-        $this->publishes([
-            __DIR__ . '/../migrations' => database_path('migrations')
-        ], 'migrations');
-
-        Route::namespace('RoyScheepens\HexonExport\Controllers')
-            ->middleware([VerifyIpWhitelist::class])
-            ->group(function() {
-                Route::post(Config::get('hexon-export.url_endpoint'), [HandleExportController::class, 'handle'])->name('hexon-export.export_handler');
-            });
+        $this->registerRoutes();
 
         // Observers
         Occasion::observe(OccasionObserver::class);
@@ -48,12 +38,49 @@ class HexonExportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/hexon-export.php', 'hexon-export');
 
-        $this->app->bind('hexon-export', function($app) {
+        $this->app->bind('hexon-export', function () {
             return new HexonExport();
         });
+    }
+
+    private function registerPublishables(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/hexon-export.php' => config_path('hexon-export.php'),
+        ], 'config');
+
+        if (! class_exists('CreateOccasionsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_000000_create_occasions_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('CreateOccasionImagesTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_occasion_images_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_100000_create_occasion_images_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('CreateOccasionAccessoriesTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_occasion_accessories_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_200000_create_occasion_accessories_table.php'),
+            ], 'migrations');
+        }
+    }
+
+    private function registerRoutes(): void
+    {
+        $endpoint = Config::get('hexon-export.url_endpoint');
+        if (empty($endpoint)) {
+            return;
+        }
+
+        Route::post($endpoint, [HandleExportController::class, 'handle'])
+            ->middleware([VerifyIpWhitelist::class])
+            ->name('hexon-export.export_handler');
     }
 }

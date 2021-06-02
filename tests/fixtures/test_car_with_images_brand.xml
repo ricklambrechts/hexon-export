@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<voertuig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://eigenwebsite.doorlinkenvoorraad.nl/docs/2.17/voertuig.xsd" actie="add" versie="2.17">
+    <voertuignr_hexon>23456789</voertuignr_hexon>
+    <merk>Ford</merk>
+    <afbeeldingen>
+        <afbeelding nr="1">
+            <url>https://images0.wheeler.nl/s1607431297/25574177-1-5-0.jpg</url>
+            <bestandsnaam/>
+            <omschrijving/>
+        </afbeelding>
+        <afbeelding nr="2">
+            <url>https://images0.wheeler.nl/s1607431297/25574177-2-5-0.jpg</url>
+            <bestandsnaam/>
+            <omschrijving/>
+        </afbeelding>
+    </afbeeldingen>
+</voertuig>

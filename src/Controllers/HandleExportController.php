@@ -34,6 +34,10 @@ class HandleExportController extends Controller
      */
     public function handle(): string
     {
+        if (app()->has('debugbar')) {
+            app('debugbar')->disable();
+        }
+
         $input = $this->request->getContent();
 
         try {

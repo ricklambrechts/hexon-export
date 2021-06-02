@@ -61,10 +61,8 @@ class HexonExport
             case 'add':
             case 'change':
 
-                // Check if the resource has any images
-                if(empty($xml->afbeeldingen))
-                {
-                    $this->setError('No images supplied, cannot proceed.');
+                // Validate the resource
+                if (!$this->isValid($xml)) {
                     return $this;
                 }
 
@@ -83,7 +81,9 @@ class HexonExport
                     $this->setAttribute('model', $xml->model);
                     $this->setAttribute('type', $xml->type);
                     $this->setAttribute('license_plate', $xml->kenteken);
-                    $this->setAttribute('apk_until', $xml->apk->attributes()->tot, 'date');
+                    if ($xml->apk) {
+                        $this->setAttribute('apk_until', $xml->apk->attributes()->tot, 'date');
+                    }
 
                     $this->setAttribute('bodywork', $xml->carrosserie);
                     $this->setAttribute('color', $xml->kleur);
@@ -95,7 +95,9 @@ class HexonExport
 
                     $this->setAttribute('fuel_type', $xml->brandstof);
                     $this->setAttribute('mileage', $xml->tellerstand, 'int');
-                    $this->setAttribute('mileage_unit', $xml->tellerstand->attributes()->eenheid);
+                    if ($xml->tellerstand) {
+                        $this->setAttribute('mileage_unit', $xml->tellerstand->attributes()->eenheid);
+                    }
                     $this->setAttribute('range', $xml->actieradius, 'int');
 
                     $this->setAttribute('transmission', $xml->transmissie);
@@ -123,13 +125,13 @@ class HexonExport
 
                     $this->setAttribute('vat_margin', $xml->btw_marge);
                     $this->setAttribute('vehicle_tax', $xml->bpm_bedrag, 'int');
-                    $this->setAttribute('road_tax_min', $xml->wegenbelasting_kwartaal->attributes()->min, 'int');
-                    $this->setAttribute('road_tax_max', $xml->wegenbelasting_kwartaal->attributes()->max, 'int');
+                    if ($xml->wegenbelasting_kwartaal) {
+                        $this->setAttribute('road_tax_min', $xml->wegenbelasting_kwartaal->attributes()->min, 'int');
+                        $this->setAttribute('road_tax_max', $xml->wegenbelasting_kwartaal->attributes()->max, 'int');
+                    }
                     $this->setAttribute('delivery_costs', $xml->kosten_rijklaar, 'int');
 
                     $this->setAttribute('price', $xml->verkoopprijs_particulier, 'int');
-
-                    $isSold = (string) $xml->verkocht === 'j' || (int) $xml->verkoopprijs_particulier < 10;
 
                     $this->setAttribute('sold', (string) $xml->verkocht === 'j', 'boolean');
                     $this->setAttribute('sold_at', $xml->verkocht_datum, 'date');
@@ -138,8 +140,9 @@ class HexonExport
                     $this->setBuildYear($xml->datum_deel_1);
 
                     // Save the resource to the database, so we can start
-                    // adding relations
                     $this->resource->save();
+
+                    ray($this->resource);
 
                     // Sets the accessories
                     $this->setAccessories($xml->accessoires->accessoire);
@@ -242,6 +245,14 @@ class HexonExport
      */
     protected function setAccessories($accessories): void
     {
+        if (!$accessories) {
+            return;
+        }
+
+        if ($this->resource === null) {
+            return;
+        }
+
         // First, remove all accessories
         $this->resource->accessories()->delete();
 
@@ -291,7 +302,7 @@ class HexonExport
                 ]).'.jpg';
 
                 $imageResource = $this->resource->images()->create([
-                    'resource_id' => $imageId,
+                    'resource_id' => $this->resourceId,
                     'filename' => $filename
                 ]);
 
@@ -353,5 +364,27 @@ class HexonExport
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    private function isValid(SimpleXmlElement $xml): bool
+    {
+        if (empty($xml->afbeeldingen)) {
+            $this->setError('No images supplied, cannot proceed.');
+            return false;
+        }
+
+        // Check if the resource has a brand
+        if (empty($xml->merk)) {
+            $this->setError('No brand supplied, cannot proceed.');
+            return false;
+        }
+
+        // Check if the resource has a model
+        if (empty($xml->model)) {
+            $this->setError('No model supplied, cannot proceed.');
+            return false;
+        }
+
+        return true;
     }
 }

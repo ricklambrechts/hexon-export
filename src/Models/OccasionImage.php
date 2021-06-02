@@ -54,7 +54,7 @@ class OccasionImage extends Model
     public function getPathAttribute(): string
     {
         return implode('/', [
-            config('hexon-export.images_storage_path') . $this->occasion->resource_id,
+            config('hexon-export.images_storage_path') . $this->resource_id,
             $this->filename
         ]);
     }
