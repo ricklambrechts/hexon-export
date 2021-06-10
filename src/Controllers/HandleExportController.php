@@ -63,5 +63,8 @@ class HandleExportController extends Controller
 
         // Hexon requires a response of '1' if all went well.
         return response("1");
+//        // TODO: Test this
+//        echo "1";
+//        die;
     }
 }
