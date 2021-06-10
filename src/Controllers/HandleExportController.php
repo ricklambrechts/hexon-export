@@ -61,10 +61,6 @@ class HandleExportController extends Controller
             abort(422, $error);
         }
 
-        // Hexon requires a response of '1' if all went well.
-        return response("1");
-//        // TODO: Test this
-//        echo "1";
-//        die;
+        return "1";
     }
 }
