@@ -320,4 +320,15 @@ class Occasion extends Model
     {
         return $query->where('sold', false);
     }
+
+    /**
+     * Returns only occasions with the specified customer number
+     * @param Builder $query The query builder instance
+     * @param int $customerNumber
+     * @return Builder
+     */
+    public function scopeOfCustomer(Builder $query, int $customerNumber): Builder
+    {
+        return $query->where('customer_number', $customerNumber);
+    }
 }

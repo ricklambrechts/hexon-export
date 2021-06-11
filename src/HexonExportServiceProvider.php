@@ -70,6 +70,12 @@ class HexonExportServiceProvider extends ServiceProvider
                 __DIR__.'/../database/migrations/create_occasion_accessories_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_200000_create_occasion_accessories_table.php'),
             ], 'migrations');
         }
+
+        if (! class_exists('AddCustomerNumberToOccasionsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/add_customer_number_to_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_300000_add_customer_number_to_occasions_table.php'),
+            ], 'migrations');
+        }
     }
 
     private function registerRoutes(): void

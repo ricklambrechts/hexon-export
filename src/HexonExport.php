@@ -77,6 +77,8 @@ class HexonExport
                     ]);
 
                     // Set all attributes and special properties of the resource
+                    $this->setAttribute('customer_number', $xml->klantnummer);
+
                     $this->setAttribute('brand', $xml->merk);
                     $this->setAttribute('model', $xml->model);
                     $this->setAttribute('type', $xml->type);
