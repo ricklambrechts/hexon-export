@@ -208,14 +208,20 @@ class Occasion extends Model
             'B' => 'Benzine',
             'D' => 'Diesel',
             'L' => 'LPG',
-            '3' => '', // todo
+            '3' => 'LPG G3',
             'E' => 'Elektrisch',
-            'H' => 'Waterstof',
-            'C' => '', // todo
+            'B,E' => 'Benzine / Elektrisch',
+            'D,E' => 'Diesel / Elektrisch',
+            'H' => 'Hybride',
+            'C' => 'Aardgas',
+            'A' => 'Alcohol',
+            'I' => 'Biodiesel',
+            '8' => 'E85',
+            'N' => 'HCNG',
             'O' => 'Overig',
         ];
 
-        return $types[$this->fuel_type];
+        return $types[$this->fuel_type] ?? 'Overig';
     }
 
     public function getTransmissionFormattedAttribute(): string
@@ -223,8 +229,8 @@ class Occasion extends Model
         $types = [
             'H' => 'Handgeschakeld',
             'A' => 'Automaat',
-            'S' => 'Sequentieel',
-            'C' => '' // todo
+            'S' => 'Semi-automaat',
+            'C' => 'CVT',
         ];
 
         return $types[$this->transmission];
