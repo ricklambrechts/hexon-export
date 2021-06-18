@@ -79,7 +79,19 @@ class HexonExportServiceProvider extends ServiceProvider
 
         if (! class_exists('AddVehicleTypeToOccasionsTable')) {
             $this->publishes([
-                __DIR__.'/../database/migrations/add_vehicle_type_to_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_400000_add_vehicle_type_to_occasions_table.php.php'),
+                __DIR__.'/../database/migrations/add_vehicle_type_to_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_400000_add_vehicle_type_to_occasions_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('AddBrandSlugToOccasionsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/add_brand_slug_to_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_500000_add_brand_slug_to_occasions_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('AddModelSlugToOccasionsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/add_model_slug_to_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_510000_add_model_slug_to_occasions_table.php'),
             ], 'migrations');
         }
     }
