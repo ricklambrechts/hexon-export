@@ -88,6 +88,7 @@ class HexonExport
                     }
 
                     $this->setAttribute('bodywork', $xml->carrosserie);
+                    $this->setAttribute('vehicle_type', $xml->voertuigsoort);
                     $this->setAttribute('color', $xml->kleur);
                     $this->setAttribute('base_color', $xml->basiskleur);
                     $this->setAttribute('lacquer', $xml->laktint);
