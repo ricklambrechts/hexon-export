@@ -23,6 +23,14 @@ class OccasionObserver
 
             $occasion->slug = $slug;
         }
+
+        if (!$occasion->brand_slug) {
+            $occasion->brand_slug = Str::slug($occasion->brand);
+        }
+
+        if (!$occasion->model_slug) {
+            $occasion->model_slug = Str::slug($occasion->model);
+        }
     }
 
     /**
