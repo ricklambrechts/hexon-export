@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Occasion extends Model
 {
+    use HasEagerLimit;
+
     /**
      * The table name
      * todo: make this a config setting
@@ -73,7 +75,7 @@ class Occasion extends Model
 
     public function image(): HasOne
     {
-        return $this->hasOne(OccasionImage::class)->orderBy('id');
+        return $this->hasOne(OccasionImage::class)->orderBy('id')->limit(1);
     }
 
     public function images(): HasMany
