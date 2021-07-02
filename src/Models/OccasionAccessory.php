@@ -4,9 +4,12 @@ namespace RoyScheepens\HexonExport\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 class OccasionAccessory extends Model
 {
+    use HasEagerLimit;
+
     /**
      * The table name
      * todo: make this a config setting
