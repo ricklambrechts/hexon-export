@@ -60,7 +60,7 @@ class OccasionObserver
      */
     protected function makeSlugUnique($occasion, $slug): string
     {
-        $list = Occasion::all()->pluck('slug', $occasion->getKeyName());
+        $list = Occasion::withoutGlobalScopes()->all()->pluck('slug', $occasion->getKeyName());
 
         $separator = '-';
 

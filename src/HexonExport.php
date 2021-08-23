@@ -72,7 +72,7 @@ class HexonExport
                 try {
 
                     // Get the existing resource or create it with the resourceId
-                    $this->resource = Occasion::where('resource_id', $this->resourceId)->firstOrNew([
+                    $this->resource = Occasion::withoutGlobalScopes()->where('resource_id', $this->resourceId)->firstOrNew([
                         'resource_id' => $this->resourceId
                     ]);
 
@@ -163,7 +163,7 @@ class HexonExport
             // Deletes the resource and all associated data
             case 'delete':
 
-                $this->resource = Occasion::where('resource_id', $this->resourceId)->first();
+                $this->resource = Occasion::withoutGlobalScopes()->where('resource_id', $this->resourceId)->first();
                 if ($this->resource) {
                     $this->resource->delete();
                 }
