@@ -1,0 +1,16 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+
+class UpdateFuelTypeInOccasionsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        DB::statement("ALTER TABLE hexon_occasions CHANGE COLUMN fuel_type fuel_type ENUM('B', 'D', 'L', '3', 'E', 'B,E', 'D,E', 'H', 'C', 'A', 'I', '8', 'N', 'O') NULL");
+    }
+}

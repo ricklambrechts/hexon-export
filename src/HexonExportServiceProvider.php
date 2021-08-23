@@ -94,6 +94,12 @@ class HexonExportServiceProvider extends ServiceProvider
                 __DIR__.'/../database/migrations/add_model_slug_to_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_510000_add_model_slug_to_occasions_table.php'),
             ], 'migrations');
         }
+
+        if (! class_exists('UpdateFuelTypeInOccasionsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/update_fuel_type_in_occasions_table.php.stub' => database_path('migrations/'.date('Y_m_d').'_600000_update_fuel_type_in_occasions_table.php'),
+            ], 'migrations');
+        }
     }
 
     private function registerRoutes(): void
