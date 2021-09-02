@@ -145,8 +145,6 @@ class HexonExport
                     // Save the resource to the database, so we can start
                     $this->resource->save();
 
-                    ray($this->resource);
-
                     // Sets the accessories
                     $this->setAccessories($xml->accessoires->accessoire);
 
