@@ -236,7 +236,7 @@ class Occasion extends Model
             'C' => 'CVT',
         ];
 
-        return $types[$this->transmission];
+        return $types[$this->transmission] ?? '';
     }
 
     public function getMassFormattedAttribute(): string
