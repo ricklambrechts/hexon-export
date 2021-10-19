@@ -2,8 +2,10 @@
 
 namespace RoyScheepens\HexonExport;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use RoyScheepens\HexonExport\Contracts\PermalinkGenerator;
 use RoyScheepens\HexonExport\Controllers\HandleExportController;
 use RoyScheepens\HexonExport\Middleware\VerifyAuthentication;
 use RoyScheepens\HexonExport\Middleware\VerifyIpWhitelist;
@@ -15,6 +17,7 @@ use RoyScheepens\HexonExport\Observers\OccasionObserver;
 use RoyScheepens\HexonExport\Observers\OccasionImageObserver;
 
 use Illuminate\Support\ServiceProvider;
+use RoyScheepens\HexonExport\Services\OccasionPermalinkGenerator;
 
 class HexonExportServiceProvider extends ServiceProvider
 {
@@ -28,6 +31,9 @@ class HexonExportServiceProvider extends ServiceProvider
         $this->registerPublishables();
 
         $this->registerRoutes();
+
+        // Bind permalink generator
+        App::bind(PermalinkGenerator::class, OccasionPermalinkGenerator::class);
 
         // Observers
         Occasion::observe(OccasionObserver::class);
