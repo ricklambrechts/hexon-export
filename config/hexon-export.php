@@ -18,6 +18,12 @@ return [
         '82.148.219.135',
     ],
 
+    'authentication' => [
+        'enabled' => env('HEXON_AUTH_ENABLED', false),
+        'username' => env('HEXON_AUTH_USERNAME', ''),
+        'password' => env('HEXON_AUTH_PASSWORD', ''),
+    ],
+
     /*
      |--------------------------------------------------------------------------
      | Url Endpoint

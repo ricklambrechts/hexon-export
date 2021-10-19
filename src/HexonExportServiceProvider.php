@@ -5,6 +5,7 @@ namespace RoyScheepens\HexonExport;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use RoyScheepens\HexonExport\Controllers\HandleExportController;
+use RoyScheepens\HexonExport\Middleware\VerifyAuthentication;
 use RoyScheepens\HexonExport\Middleware\VerifyIpWhitelist;
 
 use RoyScheepens\HexonExport\Models\Occasion;
@@ -110,7 +111,7 @@ class HexonExportServiceProvider extends ServiceProvider
         }
 
         Route::post($endpoint, [HandleExportController::class, 'handle'])
-            ->middleware([VerifyIpWhitelist::class])
+            ->middleware([VerifyIpWhitelist::class, VerifyAuthentication::class])
             ->name('hexon-export.export_handler');
     }
 }
