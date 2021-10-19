@@ -21,6 +21,12 @@ class HexonExport
     protected ?int $resourceId = null;
 
     /**
+     * The Hexon customer number of the resource
+     * @var int|null
+     */
+    protected ?int $customerNumber = null;
+
+    /**
      * The local resource we are going to create or update
      * @var Occasion|null
      */
@@ -78,6 +84,7 @@ class HexonExport
 
                     // Set all attributes and special properties of the resource
                     $this->setAttribute('customer_number', $xml->klantnummer);
+                    $this->customerNumber = (int) $xml->klantnummer;
 
                     $this->setAttribute('brand', $xml->merk);
                     $this->setAttribute('model', $xml->model);
@@ -118,9 +125,9 @@ class HexonExport
                     $this->setAttribute('top_speed', $xml->topsnelheid);
 
                     $this->setAttribute('fuel_capacity', $xml->tankinhoud, 'int');
-                    $this->setAttribute('fuel_consumption_avg', $xml->gemiddeld_verbruik || null, 'float');
-                    $this->setAttribute('fuel_consumption_city', $xml->verbruik_stad || null, 'float');
-                    $this->setAttribute('fuel_consumption_highway', $xml->verbruik_snelweg || null, 'float');
+                    $this->setAttribute('fuel_consumption_avg', $xml->gemiddeld_verbruik ?? null, 'float');
+                    $this->setAttribute('fuel_consumption_city', $xml->verbruik_stad ?? null, 'float');
+                    $this->setAttribute('fuel_consumption_highway', $xml->verbruik_snelweg ?? null, 'float');
                     $this->setAttribute('co2_emission', $xml->co2_uitstoot);
                     $this->setAttribute('energy_label', $xml->energie_label);
 
@@ -372,6 +379,21 @@ class HexonExport
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    public function getResourceId(): ?int
+    {
+        return $this->resourceId;
+    }
+
+    public function getCustomerNumber(): ?int
+    {
+        return $this->customerNumber;
+    }
+
+    public function getResource(): ?Occasion
+    {
+        return $this->resource;
     }
 
     private function isValid(SimpleXmlElement $xml): bool
