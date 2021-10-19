@@ -296,11 +296,16 @@ class HexonExport
             $imageId = (int) $image->attributes()->nr;
             $imageUrl = (string) $image->url;
 
-            if ($contents = file_get_contents($imageUrl)) {
+            try {
+                $contents = @file_get_contents($imageUrl);
+                if (!$contents) {
+                    continue;
+                }
+
                 $filename = implode('_', [
-                    $this->resourceId,
-                    $imageId
-                ]).'.jpg';
+                        $this->resourceId,
+                        $imageId
+                    ]).'.jpg';
 
                 $imageResource = $this->resource->images()->create([
                     'resource_id' => $this->resourceId,
@@ -311,8 +316,10 @@ class HexonExport
                 Storage::disk('public')->put($imageResource->path, $contents);
 
                 $imageResource->save();
+            } catch(Exception $ignore) {
+                continue;
+                // todo: handle exception?
             }
-            // todo: handle exception?
         }
     }
 
