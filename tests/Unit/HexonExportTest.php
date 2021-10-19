@@ -54,6 +54,8 @@ class HexonExportTest extends TestCase
     /** @test */
     public function it_should_return_an_error_when_resource_has_no_images(): void
     {
+        $this->assertDatabaseCount('hexon_occasions', 0);
+
         // Load the test data
         $xml = simplexml_load_string(file_get_contents($this->fixturesDir . "/test_car_without_information.xml"));
 
@@ -62,12 +64,16 @@ class HexonExportTest extends TestCase
 
         // Assert that there is an error because there are no images in the xml
         self::assertTrue($result->hasErrors());
-        self::assertContains("No images supplied, cannot proceed.", $result->getErrors()) ;
+        self::assertContains("No images supplied, cannot proceed.", $result->getErrors());
+
+        $this->assertDatabaseCount('hexon_occasions', 0);
     }
 
     /** @test */
     public function it_should_return_an_error_when_resource_has_no_brand(): void
     {
+        $this->assertDatabaseCount('hexon_occasions', 0);
+
         // Load the test data
         $xml = simplexml_load_string(file_get_contents($this->fixturesDir . "/test_car_with_images.xml"));
 
@@ -77,11 +83,15 @@ class HexonExportTest extends TestCase
         // Assert that there is an error because there are no images in the xml
         self::assertTrue($result->hasErrors());
         self::assertContains("No brand supplied, cannot proceed.", $result->getErrors()) ;
+
+        $this->assertDatabaseCount('hexon_occasions', 0);
     }
 
     /** @test */
     public function it_should_return_an_error_when_resource_has_no_model(): void
     {
+        $this->assertDatabaseCount('hexon_occasions', 0);
+
         // Load the test data
         $xml = simplexml_load_string(file_get_contents($this->fixturesDir . "/test_car_with_images_brand.xml"));
 
@@ -91,11 +101,15 @@ class HexonExportTest extends TestCase
         // Assert that there is an error because there are no images in the xml
         self::assertTrue($result->hasErrors());
         self::assertContains("No model supplied, cannot proceed.", $result->getErrors()) ;
+
+        $this->assertDatabaseCount('hexon_occasions', 0);
     }
 
     /** @test */
     public function it_should_create_an_new_occasion(): void
     {
+        $this->assertDatabaseCount('hexon_occasions', 0);
+
         // Load the test data
         $xml = simplexml_load_string(file_get_contents($this->fixturesDir . "/test_car_with_required_information.xml"));
 
