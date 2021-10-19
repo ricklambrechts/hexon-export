@@ -24,9 +24,12 @@ class HandleExportControllerTest extends TestCase
         $xml = file_get_contents($this->fixturesDir . "/test_car_with_required_information.xml");
 
         // Post request
-        $this->call('POST', route("hexon-export.export_handler"), [], [], [], [], $xml)
-            ->assertOk()
-            ->assertSeeText("1"); // ->assertLocation("/hexon-export")
+        $response = $this->call('POST', route("hexon-export.export_handler"), [], [], [], ['Content-Type' => 'application/xml'], $xml);
+        $response->assertOk();
+
+        $content = $response->content();
+
+        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', trim(explode(PHP_EOL, $content, 6)[5] ?? ''));
 
         // Assert that there is 1 occasion created
         $this->assertDatabaseCount('hexon_occasions', 1);
@@ -48,9 +51,12 @@ class HandleExportControllerTest extends TestCase
         Config::set("hexon-export.authentication.password", 'password');
 
         // Post request
-        $this->call('POST', route("hexon-export.export_handler"), [], [], [], ['PHP_AUTH_USER' => 'admin', 'PHP_AUTH_PW' => 'password'], $xml)
-            ->assertOk()
-            ->assertSeeText("1"); // ->assertLocation("/hexon-export")
+        $response = $this->call('POST', route("hexon-export.export_handler"), [], [], [], ['PHP_AUTH_USER' => 'admin', 'PHP_AUTH_PW' => 'password'], $xml);
+        $response->assertOk();
+
+        $content = $response->content();
+
+        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', trim(explode(PHP_EOL, $content, 6)[5] ?? ''));
 
         Config::set("hexon-export.authentication.enabled", false);
 

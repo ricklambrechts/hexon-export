@@ -3,12 +3,14 @@
 namespace RoyScheepens\HexonExport\Controllers;
 
 use Exception;
+use RoyScheepens\HexonExport\Contracts\PermalinkGenerator;
 use RoyScheepens\HexonExport\Facades\HexonExport;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
+use Spatie\ArrayToXml\ArrayToXml;
 
 class HandleExportController extends Controller
 {
@@ -18,13 +20,16 @@ class HandleExportController extends Controller
      */
     protected Request $request;
 
+    protected PermalinkGenerator $permalinkGenerator;
+
     /**
      * Class Constructor
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, PermalinkGenerator $permalinkGenerator)
     {
         $this->request = $request;
+        $this->permalinkGenerator = $permalinkGenerator;
     }
 
     /**
@@ -50,9 +55,47 @@ class HandleExportController extends Controller
 
                 Log::error($error);
 
-                abort(422, $error);
-                exit;
+                $response = response()->make((new ArrayToXml(
+                    [
+                        'voertuignr_hexon' => $result->getResourceId(),
+                        'klantnummer' => $result->getCustomerNumber(),
+                        'result' => 'FOUT',
+                        'foutmelding' => $error,
+                        'deeplink' => '',
+                    ],
+                    [
+                        'rootElementName' => 'feedback',
+                    ],
+                    true,
+                    'UTF-8'
+                ))->prettify()->toXml());
+                $response->setStatusCode(422);
+                $response->withHeaders(['Content-Type' => 'application/xml']);
+                return $response;
             }
+
+            $resource = $result->getResource();
+            if ($resource !== null) {
+                $resource->refresh();
+            }
+
+            $response = response()->make((new ArrayToXml(
+                [
+                    'voertuignr_hexon' => $result->getResourceId(),
+                    'klantnummer' => $result->getCustomerNumber(),
+                    'result' => 'OK', //FOUT
+                    'foutmelding' => collect($result->getErrors())->implode(', '),
+                    'deeplink' => $resource ? $this->permalinkGenerator->generate($resource) : '',
+                ],
+                [
+                    'rootElementName' => 'feedback',
+                ],
+                true,
+                'UTF-8'
+            ))->prettify()->toXml());
+
+            $response->header('Content-Type', 'application/xml');
+            return $response;
         } catch (Exception $e) {
             $error = 'Failed to parse XML due to malformed data.';
 
