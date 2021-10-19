@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class UpdateFuelTypeInOccasionsTable extends Migration
 {
@@ -11,6 +12,8 @@ class UpdateFuelTypeInOccasionsTable extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE hexon_occasions CHANGE COLUMN fuel_type fuel_type ENUM('B', 'D', 'L', '3', 'E', 'B,E', 'D,E', 'H', 'C', 'A', 'I', '8', 'N', 'O') NULL");
+        if ('sqlite' !== config('database.default') && 'testing' !== config('database.default')) {
+            DB::statement("ALTER TABLE hexon_occasions CHANGE COLUMN fuel_type fuel_type ENUM('B', 'D', 'L', '3', 'E', 'B,E', 'D,E', 'H', 'C', 'A', 'I', '8', 'N', 'O') NULL");
+        }
     }
 }

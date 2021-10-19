@@ -14,7 +14,7 @@ class AddModelSlugToOccasionsTable extends Migration
     public function up()
     {
         Schema::table('hexon_occasions', function (Blueprint $table) {
-            $table->string('model_slug');
+            $table->string('model_slug')->nullable();
         });
     }
 

@@ -14,7 +14,7 @@ class AddCustomerNumberToOccasionsTable extends Migration
     public function up()
     {
         Schema::table('hexon_occasions', function (Blueprint $table) {
-            $table->unsignedInteger('customer_number');
+            $table->unsignedInteger('customer_number')->nullable();
         });
     }
 

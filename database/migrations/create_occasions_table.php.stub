@@ -35,7 +35,7 @@ class CreateOccasionsTable extends Migration
             $table->unsignedInteger('num_doors')->nullable();
             $table->unsignedInteger('num_seats')->nullable();
 
-            $table->enum('fuel_type', ['B', 'D', 'L', '3', 'E', 'H', 'C', 'O'])->nullable();
+            $table->enum('fuel_type', ['B', 'D', 'L', '3', 'E', 'B,E', 'D,E', 'H', 'C', 'A', 'I', '8', 'N', 'O'])->nullable();
             $table->unsignedInteger('mileage')->nullable();
             $table->enum('mileage_unit', ['K', 'M'])->nullable();
             $table->unsignedInteger('range')->nullable();
