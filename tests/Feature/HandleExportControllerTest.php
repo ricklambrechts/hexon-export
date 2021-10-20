@@ -29,7 +29,7 @@ class HandleExportControllerTest extends TestCase
 
         $content = $response->content();
 
-        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', trim(explode(PHP_EOL, $content, 6)[5] ?? ''));
+        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', $content);
 
         // Assert that there is 1 occasion created
         $this->assertDatabaseCount('hexon_occasions', 1);
@@ -56,7 +56,7 @@ class HandleExportControllerTest extends TestCase
 
         $content = $response->content();
 
-        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', trim(explode(PHP_EOL, $content, 6)[5] ?? ''));
+        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', $content);
 
         Config::set("hexon-export.authentication.enabled", false);
 

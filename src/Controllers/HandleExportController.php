@@ -37,7 +37,7 @@ class HandleExportController extends Controller
      * @return String A '1' if all went well, or a 422 with reasons why if not
      * @throws Exception
      */
-    public function handle(): string
+    public function handle()
     {
         if (app()->has('debugbar')) {
             app('debugbar')->disable();
@@ -55,23 +55,13 @@ class HandleExportController extends Controller
 
                 Log::error($error);
 
-                $response = response()->make((new ArrayToXml(
-                    [
-                        'voertuignr_hexon' => $result->getResourceId(),
-                        'klantnummer' => $result->getCustomerNumber(),
-                        'result' => 'FOUT',
-                        'foutmelding' => $error,
-                        'deeplink' => '',
-                    ],
-                    [
-                        'rootElementName' => 'feedback',
-                    ],
-                    true,
-                    'UTF-8'
-                ))->prettify()->toXml());
-                $response->setStatusCode(422);
-                $response->withHeaders(['Content-Type' => 'application/xml']);
-                return $response;
+                return $this->response([
+                    'voertuignr_hexon' => $result->getResourceId(),
+                    'klantnummer' => $result->getCustomerNumber(),
+                    'result' => 'FOUT',
+                    'foutmelding' => $error,
+                    'deeplink' => '',
+                ], 422);
             }
 
             $resource = $result->getResource();
@@ -79,23 +69,13 @@ class HandleExportController extends Controller
                 $resource->refresh();
             }
 
-            $response = response()->make((new ArrayToXml(
-                [
-                    'voertuignr_hexon' => $result->getResourceId(),
-                    'klantnummer' => $result->getCustomerNumber(),
-                    'result' => 'OK', //FOUT
-                    'foutmelding' => collect($result->getErrors())->implode(', '),
-                    'deeplink' => $resource ? $this->permalinkGenerator->generate($resource) : '',
-                ],
-                [
-                    'rootElementName' => 'feedback',
-                ],
-                true,
-                'UTF-8'
-            ))->prettify()->toXml());
-
-            $response->header('Content-Type', 'application/xml');
-            return $response;
+            return $this->response([
+                'voertuignr_hexon' => $result->getResourceId(),
+                'klantnummer' => $result->getCustomerNumber(),
+                'result' => 'OK', //FOUT
+                'foutmelding' => collect($result->getErrors())->implode(', '),
+                'deeplink' => $resource ? $this->permalinkGenerator->generate($resource) : '',
+            ], 200);
         } catch (Exception $e) {
             $error = 'Failed to parse XML due to malformed data.';
 
@@ -105,5 +85,17 @@ class HandleExportController extends Controller
         }
 
         return "1";
+    }
+
+    private function response(array $result, int $status)
+    {
+        return response((new ArrayToXml(
+            $result,
+            [
+                'rootElementName' => 'feedback',
+            ],
+            true,
+            'UTF-8'
+        ))->prettify()->toXml(), $status, ['Content-Type' => 'application/xml']);
     }
 }
