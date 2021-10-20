@@ -57,6 +57,7 @@ class HexonExport
     {
         // The resource id from Hexon
         $this->resourceId = (int) $xml->voertuignr_hexon;
+        $this->customerNumber = (int) $xml->klantnummer;
 
         // Store the XML to disk before processing
         $this->saveXml($xml);
@@ -84,7 +85,6 @@ class HexonExport
 
                     // Set all attributes and special properties of the resource
                     $this->setAttribute('customer_number', $xml->klantnummer);
-                    $this->customerNumber = (int) $xml->klantnummer;
 
                     $this->setAttribute('brand', $xml->merk);
                     $this->setAttribute('model', $xml->model);
