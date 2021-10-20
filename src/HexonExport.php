@@ -33,6 +33,12 @@ class HexonExport
     protected ?Occasion $resource = null;
 
     /**
+     * A boolean that is true if an occasion is deleted
+     * @var bool
+     */
+    protected bool $isDeleted = false;
+
+    /**
      * Array of errors
      * @var array
      */
@@ -172,6 +178,8 @@ class HexonExport
                 if ($this->resource) {
                     $this->resource->delete();
                 }
+
+                $this->isDeleted = true;
 
                 break;
 
@@ -394,6 +402,11 @@ class HexonExport
     public function getResource(): ?Occasion
     {
         return $this->resource;
+    }
+
+    public function getIsDeleted(): bool
+    {
+        return $this->isDeleted;
     }
 
     private function isValid(SimpleXmlElement $xml): bool

@@ -74,7 +74,7 @@ class HandleExportController extends Controller
                 'klantnummer' => $result->getCustomerNumber(),
                 'result' => 'OK', //FOUT
                 'foutmelding' => collect($result->getErrors())->implode(', '),
-                'deeplink' => $resource ? $this->permalinkGenerator->generate($resource) : '',
+                'deeplink' => $resource && !$result->getIsDeleted() ? $this->permalinkGenerator->generate($resource) : '',
             ], 200);
         } catch (Exception $e) {
             $error = 'Failed to parse XML due to malformed data.';
