@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'ip_whitelist_enabled' => env('HEXON_IP_WHITELIST_ENABLED', true),
+
     'ip_whitelist' => [
         '82.94.237.8',
         '82.94.240.8',

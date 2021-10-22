@@ -20,6 +20,7 @@ class VerifyIpWhitelist
         $whitelist = config('hexon-export.ip_whitelist', []);
 
         abort_if(app()->environment('production')
+            && config('hexon-export.ip_whitelist_enabled')
             && count($whitelist) > 0
             && !in_array($request->ip(), $whitelist, true), 403, 'You are not allowed to access this resource.');
 

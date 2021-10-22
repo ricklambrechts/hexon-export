@@ -63,4 +63,60 @@ class HandleExportControllerTest extends TestCase
         // Assert that there is 1 occasion created
         $this->assertDatabaseCount('hexon_occasions', 1);
     }
+
+    /**
+     * @test
+     */
+    public function the_route_can_be_accessed_with_empty_ip_whitelist(): void
+    {
+        // Assert that there are no occasions on start
+        $this->assertDatabaseCount('hexon_occasions', 0);
+
+        // Load the test data
+        $xml = file_get_contents($this->fixturesDir . "/test_car_with_required_information.xml");
+
+        Config::set("hexon-export.ip_whitelist", []);
+        app()->detectEnvironment(function() { return 'production'; });
+
+        // Post request
+        $response = $this->call('POST', route("hexon-export.export_handler"), [], [], [], [], $xml);
+        $response->assertOk();
+
+        $content = $response->content();
+
+        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', $content);
+
+        Config::set("hexon-export.authentication.enabled", false);
+
+        // Assert that there is 1 occasion created
+        $this->assertDatabaseCount('hexon_occasions', 1);
+    }
+
+    /**
+     * @test
+     */
+    public function the_route_can_be_accessed_with_ip_whitelist_disabled(): void
+    {
+        // Assert that there are no occasions on start
+        $this->assertDatabaseCount('hexon_occasions', 0);
+
+        // Load the test data
+        $xml = file_get_contents($this->fixturesDir . "/test_car_with_required_information.xml");
+
+        Config::set("hexon-export.ip_whitelist_enabled", false);
+        app()->detectEnvironment(function() { return 'production'; });
+
+        // Post request
+        $response = $this->call('POST', route("hexon-export.export_handler"), [], [], [], [], $xml);
+        $response->assertOk();
+
+        $content = $response->content();
+
+        self::assertXmlStringEqualsXmlFile($this->fixturesDir . '/result_test_car_with_required_information.xml', $content);
+
+        Config::set("hexon-export.authentication.enabled", false);
+
+        // Assert that there is 1 occasion created
+        $this->assertDatabaseCount('hexon_occasions', 1);
+    }
 }

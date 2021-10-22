@@ -152,8 +152,7 @@ class HexonExport
                     $this->setAttribute('sold', (string) $xml->verkocht === 'j', 'boolean');
                     $this->setAttribute('sold_at', $xml->verkocht_datum, 'date');
 
-                    // Sets the build year
-                    $this->setBuildYear($xml->datum_deel_1);
+                    $this->setAttribute('build_year', $xml->bouwjaar);
 
                     // Save the resource to the database, so we can start
                     $this->resource->save();
@@ -234,23 +233,6 @@ class HexonExport
         }
 
         $this->resource->setAttribute($attr, $value);
-    }
-
-    /**
-     * Sets the build_year attribute based on the datum_deel_1 value
-     *
-     * @param string|null $registrationDate
-     * @return void
-     */
-    private function setBuildYear(?string $registrationDate): void
-    {
-        if ($this->resource === null) {
-            return;
-        }
-
-        if ($registrationDate && $date = Carbon::createFromFormat('d-m-Y', $registrationDate)) {
-            $this->resource->setAttribute('build_year', $date->format('m-Y'));
-        }
     }
 
     /**
