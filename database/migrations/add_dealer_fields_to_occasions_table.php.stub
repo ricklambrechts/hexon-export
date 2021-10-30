@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+class AddDealerFieldsToOccasionsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('hexon_occasions', function (Blueprint $table) {
+            $table->string('dealer_name')->nullable();
+            $table->string('dealer_address')->nullable();
+            $table->string('dealer_zipcode')->nullable();
+            $table->string('dealer_city')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('hexon_occasions', function (Blueprint $table) {
+            $table->dropColumn('dealer_name');
+            $table->dropColumn('dealer_address');
+            $table->dropColumn('dealer_zipcode');
+            $table->dropColumn('dealer_city');
+        });
+    }
+}

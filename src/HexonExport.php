@@ -154,6 +154,12 @@ class HexonExport
 
                     $this->setAttribute('build_year', $xml->bouwjaar);
 
+                    // Set dealer fields
+                    $this->setAttribute('dealer_name', $xml->dealer_naam);
+                    $this->setAttribute('dealer_address', $xml->dealer_adres);
+                    $this->setAttribute('dealer_zipcode', $xml->dealer_postcode);
+                    $this->setAttribute('dealer_city', $xml->dealer_plaats);
+
                     // Save the resource to the database, so we can start
                     $this->resource->save();
 

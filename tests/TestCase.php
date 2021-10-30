@@ -4,6 +4,7 @@ namespace RoyScheepens\HexonExport\Tests;
 
 use AddBrandSlugToOccasionsTable;
 use AddCustomerNumberToOccasionsTable;
+use AddDealerFieldsToOccasionsTable;
 use AddModelSlugToOccasionsTable;
 use AddVehicleTypeToOccasionsTable;
 use CreateOccasionAccessoriesTable;
@@ -46,6 +47,7 @@ abstract class TestCase extends Orchestra
         include_once __DIR__ . '/../database/migrations/add_brand_slug_to_occasions_table.php.stub';
         include_once __DIR__ . '/../database/migrations/add_model_slug_to_occasions_table.php.stub';
         include_once __DIR__ . '/../database/migrations/update_fuel_type_in_occasions_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/add_dealer_fields_to_occasions_table.php.stub';
 
         // run the up() method of that migration class
         (new CreateOccasionsTable())->up();
@@ -56,6 +58,7 @@ abstract class TestCase extends Orchestra
         (new AddBrandSlugToOccasionsTable())->up();
         (new AddModelSlugToOccasionsTable())->up();
         (new UpdateFuelTypeInOccasionsTable())->up();
+        (new AddDealerFieldsToOccasionsTable())->up();
     }
 
 }
